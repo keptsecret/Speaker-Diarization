@@ -1,7 +1,8 @@
 from __future__ import print_function
 from __future__ import absolute_import
 import keras
-import tensorflow as tf
+#import tensorflow as tf    # for TF 1.0s
+import tensorflow.compat.v1 as tf
 import keras.backend as K
 
 import backbone

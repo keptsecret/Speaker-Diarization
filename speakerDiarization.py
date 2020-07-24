@@ -30,7 +30,8 @@ parser.add_argument('--aggregation_mode', default='gvlad', choices=['avg', 'vlad
 # set up learning rate, training loss and optimizer.
 parser.add_argument('--loss', default='softmax', choices=['softmax', 'amsoftmax'], type=str)
 parser.add_argument('--test_type', default='normal', choices=['normal', 'hard', 'extend'], type=str)
-
+# additional argument for path to audio file to be diarized
+parser.add_argument('--input', default=r'wavs/rmdmy.wav', type=str, help='File to diarize (default: wavs/rmdmy.wav)')
 global args
 args = parser.parse_args()
 
@@ -204,5 +205,5 @@ def main(wav_path, embedding_per_second=1.0, overlap_rate=0.5):
     p.plot.show()
 
 if __name__ == '__main__':
-    main(r'wavs/rmdmy.wav', embedding_per_second=1.2, overlap_rate=0.4)
+    main(args.input, embedding_per_second=1.2, overlap_rate=0.4)
 
