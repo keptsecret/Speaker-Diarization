@@ -2,8 +2,8 @@
 """A demo script showing how to DIARIZATION ON WAV USING UIS-RNN."""
 
 import numpy as np
-import uisrnn
 import librosa
+#import uisrnn
 import sys
 sys.path.append('ghostvlad')
 sys.path.append('visualization')
@@ -11,30 +11,7 @@ import toolkits
 import model as spkModel
 import os
 from viewer import PlotDiar
-
-# ===========================================
-#        Parse the argument
-# ===========================================
 import argparse
-parser = argparse.ArgumentParser()
-# set up training configuration.
-parser.add_argument('--gpu', default='', type=str)
-parser.add_argument('--resume', default=r'ghostvlad/pretrained/weights.h5', type=str)
-parser.add_argument('--data_path', default='4persons', type=str)
-# set up network configuration.
-parser.add_argument('--net', default='resnet34s', choices=['resnet34s', 'resnet34l'], type=str)
-parser.add_argument('--ghost_cluster', default=2, type=int)
-parser.add_argument('--vlad_cluster', default=8, type=int)
-parser.add_argument('--bottleneck_dim', default=512, type=int)
-parser.add_argument('--aggregation_mode', default='gvlad', choices=['avg', 'vlad', 'gvlad'], type=str)
-# set up learning rate, training loss and optimizer.
-parser.add_argument('--loss', default='softmax', choices=['softmax', 'amsoftmax'], type=str)
-parser.add_argument('--test_type', default='normal', choices=['normal', 'hard', 'extend'], type=str)
-# additional argument for path to audio file to be diarized
-parser.add_argument('--input', default=r'wavs/rmdmy.wav', type=str, help='File to diarize (default: wavs/rmdmy.wav)')
-global args
-args = parser.parse_args()
-
 
 SAVED_MODEL_NAME = 'pretrained/saved_model.uisrnn_benchmark'
 
@@ -134,6 +111,7 @@ def load_data(path, win_length=400, sr=16000, hop_length=160, n_fft=512, embeddi
 
 def main(wav_path, embedding_per_second=1.0, overlap_rate=0.5):
 
+    import uisrnn
     # gpu configuration
     toolkits.initialize_GPU(args)
 
@@ -205,5 +183,22 @@ def main(wav_path, embedding_per_second=1.0, overlap_rate=0.5):
     p.plot.show()
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    # set up training configuration.
+    parser.add_argument('--gpu', default='', type=str)
+    parser.add_argument('--resume', default=r'ghostvlad/pretrained/weights.h5', type=str)
+    parser.add_argument('--data_path', default='4persons', type=str)
+    # set up network configuration.
+    parser.add_argument('--net', default='resnet34s', choices=['resnet34s', 'resnet34l'], type=str)
+    parser.add_argument('--ghost_cluster', default=2, type=int)
+    parser.add_argument('--vlad_cluster', default=8, type=int)
+    parser.add_argument('--bottleneck_dim', default=512, type=int)
+    parser.add_argument('--aggregation_mode', default='gvlad', choices=['avg', 'vlad', 'gvlad'], type=str)
+    # set up learning rate, training loss and optimizer.
+    parser.add_argument('--loss', default='softmax', choices=['softmax', 'amsoftmax'], type=str)
+    parser.add_argument('--test_type', default='normal', choices=['normal', 'hard', 'extend'], type=str)
+    # additional argument for path to audio file to be diarized
+    parser.add_argument('--input', '-i', default=r'wavs/rmdmy.wav', type=str, help='File to diarize (default: wavs/rmdmy.wav)')
+    args, _ = parser.parse_known_args()
     main(args.input, embedding_per_second=1.2, overlap_rate=0.4)
 
