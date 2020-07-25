@@ -3,11 +3,28 @@ from __future__ import absolute_import
 import keras
 #import tensorflow as tf    # for TF 1.0s
 import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import keras.backend as K
 
 import backbone
 weight_decay = 1e-4
 
+
+def _get_available_gpus():
+    """Get a list of available GPU devices.
+    # Returns
+        A list of available GPU devices
+    """
+    global _LOCAL_DEVICES
+    _LOCAL_DEVICES = None
+    if _LOCAL_DEVICES is None:
+        if K.tensorflow_backend._is_tf_1():
+            devices = get_session().list_devices()
+            _LOCAL_DEVICES = [x.name for x in devices]
+        else:
+            devices = tf.config.list_logical_devices()
+            _LOCAL_DEVICES = [x.name for x in devices]
+    return [x for x in _LOCAL_DEVICES if 'device:gpu' in x.lower()]
 
 class ModelMGPU(keras.Model):
     def __init__(self, ser_model, gpus):
@@ -85,7 +102,7 @@ def vggvox_resnet2d_icassp(input_dim=(257, 250, 1), num_class=8631, mode='train'
     ghost_clusters=args.ghost_cluster
     bottleneck_dim=args.bottleneck_dim
     aggregation = args.aggregation_mode
-    mgpu = len(keras.backend.tensorflow_backend._get_available_gpus())
+    mgpu = len(_get_available_gpus())
 
     if net == 'resnet34s':
         inputs, x = backbone.resnet_2D_v1(input_dim=input_dim, mode=mode)
