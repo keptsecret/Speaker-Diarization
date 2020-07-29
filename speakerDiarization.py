@@ -169,14 +169,26 @@ def main(wav_path, embedding_per_second=1.0, overlap_rate=0.5):
             speakerSlice[spk][tid]['start'] = s
             speakerSlice[spk][tid]['stop'] = e
 
-    for spk,timeDicts in speakerSlice.items():
-        print('========= ' + str(spk) + ' =========')
-        for timeDict in timeDicts:
-            s = timeDict['start']
-            e = timeDict['stop']
-            s = fmtTime(s)  # change point moves to the center of the slice
-            e = fmtTime(e)
-            print(s+' ==> '+e)
+    if (args.output == None):
+        for spk, timeDicts in speakerSlice.items():
+            print('========= ' + str(spk) + ' =========')
+            for timeDict in timeDicts:
+                s = timeDict['start']
+                e = timeDict['stop']
+                s = fmtTime(s)  # change point moves to the center of the slice
+                e = fmtTime(e)
+                print(s + ' ==> ' + e)
+    else:
+        f = open(args.output, 'w')
+        for spk, timeDicts in speakerSlice.items():
+            f.write('========= ' + str(spk) + ' =========\n')
+            for timeDict in timeDicts:
+                s = timeDict['start']
+                e = timeDict['stop']
+                s = fmtTime(s)  # change point moves to the center of the slice
+                e = fmtTime(e)
+                f.write(s + ' ==> ' + e + '\n')
+        f.close()
 
     p = PlotDiar(map=speakerSlice, wav=wav_path, gui=True, size=(25, 6))
     p.draw()
@@ -197,8 +209,9 @@ if __name__ == '__main__':
     # set up learning rate, training loss and optimizer.
     parser.add_argument('--loss', default='softmax', choices=['softmax', 'amsoftmax'], type=str)
     parser.add_argument('--test_type', default='normal', choices=['normal', 'hard', 'extend'], type=str)
-    # additional argument for path to audio file to be diarized
-    parser.add_argument('--input', '-i', default=r'wavs/rmdmy.wav', type=str, help='File to diarize (default: wavs/rmdmy.wav)')
+    # additional argument for input/output paths
+    parser.add_argument('--input', default=r'wavs/rmdmy.wav', type=str, help='File to diarize (default: wavs/rmdmy.wav)')
+    parser.add_argument('--output', default=None, type=str, help='Option to send output to a file at specified path (default: print to commandline)')
     args, _ = parser.parse_known_args()
     main(args.input, embedding_per_second=1.2, overlap_rate=0.4)
 

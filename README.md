@@ -15,19 +15,24 @@ This repository is a [fork](https://github.com/taylorlu/Speaker-Diarization) and
 7. librosa
 8. pyaudio
 
+The easiest way to install the required libraries without version conflicts is to use Anaconda.
+
 _Note: If TF 2.0+ is installed, be sure to change the imports in `ghostvlad/toolkits.py` and `ghostvlad/model.py` to the compat version_
 
 ## Running diarization
 
-Run
+On the command line, run
 
-```console
-python speakerDiarization.py -i <path-to-audio-file>
+```bash
+python speakerDiarization.py --input <path-to-audio-file>
 ```
 
-The result on the commandline will be similar to (on a file with 3 speakers):
+and the results will be printed to the command line.  
+Optionally, to send the output to a file, add `--output <path-to-write>`.
 
-```console
+The result on the commandline/in the file will be similar to (from an audio clip with 3 speakers):
+
+```bash
 ========= 0 =========
 0:00.288 ==> 0:04.406
 0:07.699 ==> 0:16.461
